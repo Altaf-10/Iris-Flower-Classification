@@ -1,0 +1,238 @@
+Iris Flower Classification
+
+
+LINK :
+https://thecleverprogrammer.com/2021/10/17/iris-flower-classification-with-machine-learning/
+
+
+
+INTRODUCTION
+____________
+
+Data Visualization,Analysis,Manipulation we use Python Libraries.
+
+1. NumPy : Numerical Python used for Mathematical computations like Trignometry,Exponential,Statistics. Supports Arrays,Matrices. Performs operations Effectively. (import numpy as np)
+
+2. Pandas : Manipulate Structured Data. Create,Manipulate Tabulated Data. (import pandas as pd)
+
+3. Matplotlib : To Visualize data and provide insights. Used as Data Visualization in Python. Wide range of plotting options such as line plots,bar plots,histograms,pie chart. (import matplotlib.pyplot as plt)
+
+
+
+
+
+K-Nearest Neighbour(KNN) Algorithm
+____________________________________
+
+-Based on Supervised Learning.
+
+-KNN is called as Lazy-Learner Algorithm because it doesnot learn from the training set immediately,instead it just stores the DataSet
+
+-When it gets a New DataPoint then at the time of Classification it Classifies the data and finds a point in the training set that is closest to the new point.Then, it assigns the LABEL of this learning set to the new data point.
+
+-K in KNN means that instead of using the Nearest Closest Neighbour to the new data point,we consider K Nearest Neighbours in the training set and the make a prediction.
+
+-To Calculate the Nearest Neighbour we use,
+Euclidean Distance : Sqrt( (X2-X1)2 + (Y2-Y1)2 )
+Manhattan Distance : |X1-Y1| + |X2-Y2|
+
+-Prone to OverFitting.
+-Easy to Implement.
+
+
+
+
+
+Step-1 : Load the Iris DataSet.
+______	
+
+Method-I --> We can Download the Iris Dataset file & load it.
+/*
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+ 
+iris = pd.read_csv(Iris.csv)
+*/
+
+Note : 
+1)Iris File -- https://www.kaggle.com/datasets/saurabh00007/iriscsv?resource=download
+2).csv Extension --
+The .csv extension refers to Comma-Separated Values used to store tabular data in plain text. In a CSV file, each row represents a data record, and the values in each row are separated by commas.
+Python's pandas, can read and write data from/to CSV files easily.
+
+
+Method-II --> Iris Dataset is already availabe in Sci-Kit Learn Module.We can import it.
+/*
+from sklearn.datasets import load_iris
+iris = load_iris()
+*/
+
+
+
+Step-2 : Preprocess the Data.Here we check for  _______  any missing values or NULL values and ensure the data is clean.
+
+Method-I -->
+/*
+print(iris) : (NOT RECOMMENDED) Displays the Entire DataFrame.
+
+print(iris.head()) : Displays the first 5 rows of the Iris DataFrame by default.Useful when we want to inspect the structure and contents of the DataFrame. 
+
+print(iris.tail()) : Similarly it displays the last 5 rows of DataFrame.
+
+To Access a particular column in the DataFrame: iris[COLUMN_NAME] - Which gives all the data points.
+
+print(iris['Species'].unique()) : To make them redundant we use unique() method which returns a list of only unique values in the column.
+*/
+
+/*
+Now let’s have a look at the descriptive statistics of this dataset:
+
+print(iris.describe()) : The function calculates the DESCRIPTIVE STATISTICS for each NUMERIC column  of the Iris DataFrame.
+The output is a NEW DataFrame containing the descriptive statistics for each NUMERIC column of the DataFrame.
+
+Descriptive Statistics Displayed
+1. count : The number of non-null values in each numeric columns.Doesn't count the row having missing values or NaN.
+2. mean : The arthimetic average of each column that represents the central tendency.
+3. std : Standard Deviation of each column.
+4. min : Minimum value in each column.
+5. 25% : Q1 The first quartile(Q1) is the 25th percentile of the data.It indicates the value below which 25% of the data points fall. For example, 25% of the sepal_length data points are less than or equal to 5.1
+6. 50% : The second quartile(Q2) is the Median of the data.
+7. 75% : The third quartile(Q3) is the 75th percentile of data.
+8. max : Maximim value in each column.
+*/
+
+
+Method-II -->
+/*
+print(iris) : Gives an Dictionary which contains the fields.
+Similarly, 
+iris.data : return a numpy array of the numeric columns. 
+iris.target : return a numpy array of the species category.
+iris['target_names'] & iris['feature_names']
+*/
+
+
+
+
+Step-3 : Inspect the Data.One of the best ways _______  to inspect the data is to visualise it.
+One way to do this is by using scatter plot.
+
+plt.scatter(x, y, label, marker, color)
+Here, x-> X-Coordinates Array
+y-> Y-Coordinates Array
+label-> Label for the data series
+marker -> marker style for data points like 'o','x','^','s'.
+color-> color for the data point.
+
+plt.xlabel(): Set the label for the x-axis.
+plt.ylabel(): Set the label for the y-axis.
+plt.title(): Set the title of the scatter plot.
+plt.legend(): Display the legend, which includes the labels for each species in the scatter plot.
+plt.show(): Display the scatter plot.
+
+
+Method-I --> 
+/*
+setosa = iris[iris['Species'] == 'Iris-setosa']
+versicolor = iris[iris['Species'] == 'Iris-versicolor']
+virginica = iris[iris['Species'] == 'Iris-virginica']
+
+plt.scatter(setosa['SepalLengthCm'], setosa['SepalWidthCm'], label='Iris-setosa', marker='o', color='blue')
+plt.scatter(versicolor['SepalLengthCm'], versicolor['SepalWidthCm'], label='Iris-versicolor', marker='^', color='green')
+plt.scatter(virginica['SepalLengthCm'], virginica['SepalWidthCm'], label='Iris-virginica', marker='s', color='red')
+
+plt.xlabel("SepalLength(CM)")
+plt.ylabel("Sepal Width(CM)")
+plt.title("SepalLength vs SepalWidth")
+plt.legend()
+plt.show()
+*/
+
+Method-II -->
+We first create a DataFrame using Pandas for the iris data.
+To do this we use,
+IrisDF = pd.DataFrame(data,index,columns)
+
+data--It can be a dictionary, a list of lists, a list of dictionaries, a NumPy array, or another DataFrame. 
+index: specify row labels (index) for the DataFrame. 
+columns: specify column labels for the DataFrame.
+/*
+IrisDF = pd.DataFrame(iris.data, columns=iris.feature_names)
+IrisDF['species'] = iris.target_names[iris.target]
+The rest is same as Method-I.
+*/
+
+
+
+Step-4 : Split the data into training and testin _______  sets. 
+Scikit-learn contains a function that shuffles the dataset and splits it into two. The function is known as the train_test_split function.
+
+Syntax - 
+train_test_split(Arrays,test_size,train_size,random_state)
+Arrays--represents the input data that we want to split.
+test_size--specifies the proportion of the dataset to include in the testing set.
+train_size--specifies the proportion of the dataset to include in the training set.
+
+At least one of test_size or train_size must be specified. 
+If both are not provided, the default value of test_size will be set to 0.25 (25%) and train_size to 0.75 (75%). 
+If both test_size and train_size are specified, train_size takes priority.
+
+random_state--It is used to control the random shuffling of the data before splitting. 
+
+
+
+Method-I --> First we split features and target labels together while maintaining their correspondence.
+ 
+/*
+feature = iris.drop('Species',axis=1)
+target = iris.Species
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(feature , target , test_size = 0.2 , random_state=0)
+*/
+
+NOTE :
+1)The drop method is used to drop a specified rows or column from the dataframe.
+2)Syntax- DF.drop(LABEL_NAME, axis).
+Here DF is the DataFrame we want to drop.
+Label is the row/column we want to drop.
+Axis specifies whether the operation should be performed along the rows(axis=0) or columns(axis=1).
+
+  
+
+Method-II -->
+/*
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(iris.data , iris['target'] , test_size=0.2 , random_state=0)
+*/
+
+
+
+
+Step-5 : Train the Model.We use KNN Algorithm.
+_______
+
+/*
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=1)
+knn.fit(x_train,y_train)
+*/
+
+NOTE : 
+1)The most important parameter of the KNeighbors classifier is the number of neighbors, which we will set to 1.
+2)The fit() method is used to train the model on a given dataset. During training, the KNN algorithm simply memorizes the training data points and their corresponding labels to build the model.
+3)The fit() method takes two input parameters: X and y.
+X: The feature data y: The target data.
+
+
+
+
+Step-6 : Make Predictions.
+______
+
+The predict() function in scikit-learn is used to make predictions on new, unseen data using a trained machine learning model.
+
+var = classifier.predict(new_data)
+Here new_data is a 2-dimensional array-like object (e.g., NumPy array or pandas DataFrame).
+NOTE:Be careful while fitting the Data into the classifier,as we may get an ERROR while providing new data it states that X is fitted using feature names.
+
